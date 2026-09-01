@@ -59,11 +59,16 @@ export function useScramble(
    * and the layout would shift when it popped in. Adding the delay to every
    * character's reveal time means the slot flickers at its final width from
    * the first frame, and only the resolve is staggered.
+   *
+   * It is also an intro affordance, so it is spent once. A later pass — a
+   * cycle, or a label swapping to new text — resolves at full speed rather
+   * than sitting behind the group's entrance offset.
    */
+  let staggered = false
   const spec = (): ScrambleSpec => ({
     ...DEFAULT_SPEC,
     ...options,
-    hold: (options.hold ?? DEFAULT_SPEC.hold) + delay,
+    hold: (options.hold ?? DEFAULT_SPEC.hold) + (staggered ? 0 : delay),
     text: source.value,
   })
   let startedAt = 0
@@ -100,6 +105,7 @@ export function useScramble(
 
     if (now - resolvedAt >= options.cycleEvery) {
       options.onCycle?.()
+      staggered = true
       startedAt = now
       resolved.value = false
       resolvedAt = 0
@@ -110,8 +116,10 @@ export function useScramble(
     if (reduced) {
       display.value = source.value
       resolved.value = true
+      staggered = true
       return
     }
+    if (startedAt !== 0) staggered = true
     startedAt = performance.now()
     resolved.value = false
     resolvedAt = 0

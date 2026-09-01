@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toRef } from 'vue'
 import { useScramble } from '../composables/useScramble'
 
 interface Props {
@@ -8,7 +9,9 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { display } = useScramble(props.text, {
+// A ref, not the raw string: swapping the label ("email" -> "copied")
+// should scramble into the new word rather than snap to it.
+const { display } = useScramble(toRef(props, 'text'), {
   delay: props.delay ?? 0,
   stagger: 24,
   hold: 260,
