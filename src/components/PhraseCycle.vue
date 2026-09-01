@@ -36,7 +36,6 @@ const { display } = useScramble(current, {
   margin: 18px 0 0;
   font-size: clamp(12px, 1.9vw, 14px);
   letter-spacing: 0.22em;
-  text-transform: lowercase;
   color: var(--mut);
   white-space: pre;
   min-height: 1.4em;
